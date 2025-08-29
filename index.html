@@ -7,66 +7,33 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- HEADER -->
   <header>
     <h1>Latte Coffee Shop</h1>
     <nav>
       <a href="#about">About</a>
       <a href="#menu">Menu</a>
       <a href="https://www.instagram.com/latte_coffe_shop?igsh=MWNyeXhvc3hyYTZ0eA%3D%3D&utm_source=qr" target="_blank">Instagram</a>
-      <button id="adminBtn">Admin</button>
     </nav>
   </header>
 
-  <!-- ABOUT -->
   <section id="about">
     <h2>About Us</h2>
-    <p>Welcome to Latte Coffee Shop! We serve delicious drinks, fresh flavors, and cozy vibes. Explore our menu and enjoy your time with us.</p>
+    <p>Welcome to Latte Coffee Shop! We serve the best coffee, boba, and treats in town with a cozy orange-inspired theme.</p>
   </section>
 
-  <!-- MENU -->
   <section id="menu">
     <h2>Our Menu</h2>
-    <div id="menuContainer" class="menu-grid"></div>
+    <div id="menu-container"></div>
   </section>
 
-  <!-- FLOATING BUTTONS -->
-  <a href="https://wa.me/96171418947" class="whatsapp-float" target="_blank">WhatsApp</a>
-  <a href="tel:+96171418947" class="call-float">Call</a>
+  <button id="whatsapp-btn">Chat on WhatsApp</button>
 
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" class="admin-panel hidden">
-    <h3>Admin Panel</h3>
-    <label>PIN: <input type="password" id="pinInput"></label>
-    <button id="loginBtn">Login</button>
-
-    <div id="adminControls" class="hidden">
-      <h4>Add / Edit Item</h4>
-      <input type="text" id="itemName" placeholder="Item name" />
-      <input type="number" id="itemPrice" placeholder="Price" />
-      <select id="itemCategory">
-        <option>Hot</option>
-        <option>Cold</option>
-        <option>Milkshake</option>
-        <option>Boba</option>
-        <option>Refresher</option>
-        <option>Frappe</option>
-        <option>Sugar Free</option>
-        <option>Shisha</option>
-      </select>
-      <input type="file" id="itemImage" accept="image/*" />
-      <button id="saveItemBtn">Save Item</button>
-
-      <h4>Export / Import</h4>
-      <button id="exportBtn">Export JSON</button>
-      <input type="file" id="importFile" accept=".json" />
-    </div>
+  <div id="admin-panel" class="hidden">
+    <h2>Admin Panel</h2>
+    <div id="admin-items"></div>
+    <button id="add-item">Add New Item</button>
+    <button id="save-changes">Save Changes</button>
   </div>
-
-  <footer>
-    <p>© 2025 Latte Coffee Shop</p>
-    <a href="https://www.instagram.com/latte_coffe_shop?igsh=MWNyeXhvc3hyYTZ0eA%3D%3D&utm_source=qr" target="_blank">Instagram</a>
-  </footer>
 
   <script src="script.js"></script>
 </body>

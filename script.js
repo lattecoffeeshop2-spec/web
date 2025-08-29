@@ -1,83 +1,138 @@
-const menuContainer = document.getElementById("menuContainer");
-const adminBtn = document.getElementById("adminBtn");
-const adminPanel = document.getElementById("adminPanel");
-const loginBtn = document.getElementById("loginBtn");
-const pinInput = document.getElementById("pinInput");
-const adminControls = document.getElementById("adminControls");
-const saveItemBtn = document.getElementById("saveItemBtn");
-const itemName = document.getElementById("itemName");
-const itemPrice = document.getElementById("itemPrice");
-const itemCategory = document.getElementById("itemCategory");
-const itemImage = document.getElementById("itemImage");
-const exportBtn = document.getElementById("exportBtn");
-const importFile = document.getElementById("importFile");
+const defaultMenu = {
+  Hot: [
+    { name: "Espresso", price: 3, img: "https://via.placeholder.com/150" },
+    { name: "Cappuccino", price: 4, img: "https://via.placeholder.com/150" },
+    { name: "Latte", price: 4, img: "https://via.placeholder.com/150" },
+    { name: "Americano", price: 3, img: "https://via.placeholder.com/150" }
+  ],
+  Cold: [
+    { name: "Iced Coffee", price: 3.5, img: "https://via.placeholder.com/150" },
+    { name: "Iced Latte", price: 4, img: "https://via.placeholder.com/150" },
+    { name: "Cold Brew", price: 4.5, img: "https://via.placeholder.com/150" }
+  ],
+  Milkshake: [
+    { name: "Oreo Milkshake", price: 5, img: "https://via.placeholder.com/150" },
+    { name: "Vanilla Milkshake", price: 5, img: "https://via.placeholder.com/150" },
+    { name: "Chocolate Milkshake", price: 5, img: "https://via.placeholder.com/150" }
+  ],
+  Boba: [
+    { name: "Strawberry Milk Boba", price: 6, img: "https://via.placeholder.com/150" },
+    { name: "Passion Mango Boba", price: 6, img: "https://via.placeholder.com/150" }
+  ],
+  Refresher: [
+    { name: "Strawberry Refresher", price: 4, img: "https://via.placeholder.com/150" },
+    { name: "Mango Refresher", price: 4, img: "https://via.placeholder.com/150" }
+  ],
+  Frappe: [
+    { name: "Mocha Frappe", price: 5, img: "https://via.placeholder.com/150" },
+    { name: "Caramel Frappe", price: 5, img: "https://via.placeholder.com/150" }
+  ],
+  "Sugar Free": [
+    { name: "Sugar-Free Latte", price: 4, img: "https://via.placeholder.com/150" },
+    { name: "Sugar-Free Cappuccino", price: 4, img: "https://via.placeholder.com/150" }
+  ],
+  Shisha: [
+    { name: "Double Apple", price: 10, img: "https://via.placeholder.com/150" },
+    { name: "Grape Mint", price: 10, img: "https://via.placeholder.com/150" }
+  ]
+};
 
-let menuItems = JSON.parse(localStorage.getItem("menuItems")) || [];
-let pin = "71418947"; // default PIN
+let menu = JSON.parse(localStorage.getItem("menu")) || defaultMenu;
 
 function renderMenu() {
-  menuContainer.innerHTML = "";
-  menuItems.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "menu-item";
-    div.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" />
-      <h4>${item.name}</h4>
-      <p>$${item.price}</p>
-      <p><em>${item.category}</em></p>
-      <button onclick="deleteItem(${index})">Delete</button>
-    `;
-    menuContainer.appendChild(div);
-  });
-}
-function deleteItem(index) {
-  menuItems.splice(index, 1);
-  localStorage.setItem("menuItems", JSON.stringify(menuItems));
-  renderMenu();
-}
-saveItemBtn.addEventListener("click", () => {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    menuItems.push({
-      name: itemName.value,
-      price: itemPrice.value,
-      category: itemCategory.value,
-      image: e.target.result
+  const container = document.getElementById("menu-container");
+  container.innerHTML = "";
+  for (const category in menu) {
+    const section = document.createElement("div");
+    section.innerHTML = `<h3>${category}</h3>`;
+    menu[category].forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "menu-item";
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}" />
+        <h4>${item.name}</h4>
+        <p>$${item.price}</p>
+      `;
+      section.appendChild(div);
     });
-    localStorage.setItem("menuItems", JSON.stringify(menuItems));
-    renderMenu();
-  };
-  if (itemImage.files[0]) {
-    reader.readAsDataURL(itemImage.files[0]);
+    container.appendChild(section);
   }
-});
-adminBtn.addEventListener("click", () => {
+}
+
+function openAdmin() {
+  const adminPanel = document.getElementById("admin-panel");
   adminPanel.classList.toggle("hidden");
-});
-loginBtn.addEventListener("click", () => {
-  if (pinInput.value === pin) {
-    adminControls.classList.remove("hidden");
-  } else {
-    alert("Wrong PIN");
+
+  const adminItems = document.getElementById("admin-items");
+  adminItems.innerHTML = "";
+
+  for (const category in menu) {
+    const section = document.createElement("div");
+    section.innerHTML = `<h3>${category}</h3>`;
+    menu[category].forEach((item, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = `
+        <input type="text" value="${item.name}" data-cat="${category}" data-idx="${index}" data-field="name" />
+        <input type="number" value="${item.price}" data-cat="${category}" data-idx="${index}" data-field="price" />
+        <input type="file" accept="image/*" data-cat="${category}" data-idx="${index}" data-field="img" />
+        <button data-cat="${category}" data-idx="${index}" class="remove-btn">Remove</button>
+      `;
+      section.appendChild(wrapper);
+    });
+    adminItems.appendChild(section);
   }
+}
+
+document.getElementById("add-item").addEventListener("click", () => {
+  const cat = prompt("Enter category:");
+  const name = prompt("Enter item name:");
+  const price = parseFloat(prompt("Enter price:"));
+  if (!menu[cat]) menu[cat] = [];
+  menu[cat].push({ name, price, img: "https://via.placeholder.com/150" });
+  openAdmin();
 });
-exportBtn.addEventListener("click", () => {
-  const data = JSON.stringify(menuItems, null, 2);
-  const blob = new Blob([data], {type: "application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "menu.json";
-  a.click();
+
+document.getElementById("save-changes").addEventListener("click", () => {
+  const inputs = document.querySelectorAll("#admin-items input");
+  inputs.forEach(input => {
+    const cat = input.dataset.cat;
+    const idx = input.dataset.idx;
+    const field = input.dataset.field;
+    if (field === "img" && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        menu[cat][idx].img = e.target.result;
+        localStorage.setItem("menu", JSON.stringify(menu));
+        renderMenu();
+      };
+      reader.readAsDataURL(input.files[0]);
+    } else if (field !== "img") {
+      menu[cat][idx][field] = input.value;
+    }
+  });
+
+  // Remove buttons
+  document.querySelectorAll(".remove-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const cat = e.target.dataset.cat;
+      const idx = e.target.dataset.idx;
+      menu[cat].splice(idx, 1);
+      openAdmin();
+    });
+  });
+
+  localStorage.setItem("menu", JSON.stringify(menu));
+  renderMenu();
+  alert("Changes saved!");
 });
-importFile.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    menuItems = JSON.parse(evt.target.result);
-    localStorage.setItem("menuItems", JSON.stringify(menuItems));
-    renderMenu();
-  };
-  reader.readAsText(file);
+
+// WhatsApp button
+document.getElementById("whatsapp-btn").addEventListener("click", () => {
+  window.open("https://wa.me/96171418947", "_blank");
 });
+
+// Render on load
 renderMenu();
+
+// Toggle admin panel with double-click on header title
+document.querySelector("header h1").addEventListener("dblclick", openAdmin);
